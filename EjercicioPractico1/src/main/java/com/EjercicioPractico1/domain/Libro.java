@@ -5,17 +5,26 @@ import java.io.Serializable;
 import lombok.Data;
 @Data
 @Entity
-@Table(name="libro")
+@Table(name="libros")
 public class Libro implements Serializable {
      private static final long serialVersionUID = 1L;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
+    
     private Long id;
+    
+    
+    
     private String titulo;
+    
+    
     private String autor;
+   
+    
     private double precio;
+    
     private String categoria;
 
     public Libro() {

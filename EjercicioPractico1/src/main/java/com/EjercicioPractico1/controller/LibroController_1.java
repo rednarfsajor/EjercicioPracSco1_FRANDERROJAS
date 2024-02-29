@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @Slf4j
 @RequestMapping("/libro")
-public class LibroController {
+public class LibroController_1 {
     @Autowired
     private LibroService libroService;
 
-    @GetMapping("/listado")
+    @GetMapping("/Contacto")
     public String inicio(Model model) {
         var libros = libroService.getLibros();
         model.addAttribute("libros", libros);
         model.addAttribute("totalLibros", libros.size());
-        return "libro/listado";
+        return "libro/Contacto";
     }
 }
