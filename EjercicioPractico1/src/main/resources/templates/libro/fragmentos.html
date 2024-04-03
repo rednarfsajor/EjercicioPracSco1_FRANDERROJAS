@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     <head th:replace="~{layout/template :: head}">
-        <title>TechShop</title>
+        <title>Librería</title>
     </head>
     <body>
         <!-- 1 Sección para crear el boton de agregar... llamará a una ventana modal-->
@@ -16,7 +16,7 @@
                             class="btn btn-primary btn-block" 
                             data-bs-toggle="modal" 
                             data-bs-target="#agregarLibro">
-                            <i class="fas fa-plus"></i> [[#{libro.agregar}]]
+                            <i class="fas fa-plus"></i> Agregar Libro
                         </button>
                     </div>
                 </div>
@@ -33,25 +33,29 @@
                 <div class="modal-dialog modal-md">
                     <div class="modal-content">
                         <div class="modal-header bg-info text-white">
-                            <h5 class="modal-title">[[#{libro.agregar}]]</h5>
+                            <h5 class="modal-title">Agregar Libro</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div> 
                         <form th:action="@{/libro/guardar}" th:object="${libro}"
                               method="POST" class="was-validated" enctype="multipart/form-data">
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="descripcion">[[#{libro.descripcion}]]</label>
-                                    <input type="text" class="form-control" name="descripcion" required="true"/>
+                                    <label for="titulo">Título</label>
+                                    <input type="text" class="form-control" name="titulo" required="true"/>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="activo">[[#{libro.activo}]]</label>
-                                    <input class="form-check-input" type="checkbox" name="activo" id="activo"/>
+                                    <label for="autor">Autor</label>
+                                    <input type="text" class="form-control" name="autor" required="true"/>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="imagen">[[#{libro.rutaImagen}]]</label>
-                                    <input class="form-control" type="file" name="imagenFile" onchange="readURL(this);"/>
-                                    <img id="blah" src="#" alt="your image" height="200"/>
+                                    <label for="precio">Precio</label>
+                                    <input type="number" class="form-control" name="precio" required="true"/>
                                 </div>
+                                <div class="mb-3">
+                                    <label for="categoira">Categoria</label>
+                                    <input type="text" class="form-control" name="categoria" required="false"/>
+                                </div>
+                  
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary" type="submit">Guardar</button>
@@ -89,8 +93,13 @@
                                             <td>[[${book.titulo}]]</td>
                                             <td>[[${book.categoria}]]</td>
                                             <td>[[${book.precio}]]</td>
-                                            <td > <button type="button" class="btn btn-dark">Ver</button></td>
-                                            </tr>
+                                            <td sec:authorize="hasRole('ROLE_ADMIN')"><a th:href="@{/libro/eliminar/}+${book.id}"
+                                                   class="btn btn-danger">
+                                                    <i class="fas fa-trash"></i> Eliminar </a>
+                                            <a th:href="@{/libro/modifica/}+${book.id}"
+                                               data-bs-target="#modificarLibro"
+                                                   class="btn btn-success">
+                                            <i class="fas fa-pencil"></i>Modificar</a></td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -109,11 +118,14 @@
                 <div class="col-md-8">
                     <form method="POST"
                           th:action="@{/libro/guardar}" 
-                          th:object="${libro}"
+                          th:object="${book}"
                           class="was-validated"                          
                           enctype="multipart/form-data">
-                        <input type="hidden" name="idLibro" th:field="*{idLibro}"/>
-                        <input type="hidden" name="rutaImagen" th:field="*{rutaImagen}"/>
+                        <input type="hidden" name="id" th:field="*{id}"/>
+                        <input type="hidden" name="autor" th:field="*{autor}"/>
+                        <input type="hidden" name="titulo" th:field="*{titulo}"/>
+                        <input type="hidden" name="categoria" th:field="*{categoria}"/>
+                        <input type="hidden" name="precio" th:field="*{precio}"/>
                         <section th:replace="~{libro/fragmentos :: botonesEditar}"/>
                         <div id=details>
                             <div class="container">
@@ -121,28 +133,32 @@
                                     <div class="col">
                                         <div class="card">
                                             <div class="card-header">
-                                                <h4>[[#{accion.actualizar}]]</h4>
+                                                <h4>Modificar Libro</h4>
                                             </div>
                                             <div class="card-body">
                                                 <div class="mb-3">
-                                                    <label for="descripcion">[[#{libro.descripcion}]]</label>
+                                                    <label for="autor">Autor</label>
                                                     <input type="text" class="form-control" 
-                                                           name="descripcion" th:field="*{descripcion}"
+                                                           name="autor" th:field="*{autor}"
                                                            required="true">
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="activo">[[#{libro.activo}]]</label>
-                                                    <input class="form-check-input" 
-                                                           type="checkbox" 
-                                                           name="activo" 
-                                                           id="activo"
-                                                           th:field="*{activo}">
+                                                    <label for="titulo">Titulo</label>
+                                                    <input type="text" class="form-control" 
+                                                           name="titulo" th:field="*{titulo}"
+                                                           required="true">
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="imagen">[[#{libro.rutaImagen}]]</label>
-                                                    <input class="form-control" type="file" name="imagenFile"
-                                                           onchange="readURL(this);" />
-                                                    <img id="blah" th:src="@{${libro.rutaImagen}}" alt="your image" height="200"/>
+                                                    <label for="categoria">Categoria</label>
+                                                    <input type="text" class="form-control" 
+                                                           name="cagetoria" th:field="*{categoria}"
+                                                           required="true">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="precio">Precio</label>
+                                                    <input type="text" class="form-control" 
+                                                           name="precio" th:field="*{precio}"
+                                                           required="true">
                                                 </div>
                                             </div>
                                         </div>
@@ -160,22 +176,48 @@
                 <div class="row">
                     <div class="col-md-4 d-grid">
                         <a th:href="@{/libro/listado}" class="btn btn-primary">
-                            <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]
+                            <i class="fas fa-arrow-left"></i>Regresar
                         </a>
                     </div>
                     <div class="col-md-4 d-grid">                                
-                        <a th:href="@{/libro/eliminar/}+${libro.idLibro}"
+                        <a th:href="@{/libro/eliminar/}+${libro.id}"
                            class="btn btn-danger">
-                            <i class="fas fa-trash"></i> [[#{accion.eliminar}]]
+                            <i class="fas fa-trash"></i>Eliminar
                         </a>
                     </div>
                     <div class="col-md-4 d-grid">
                         <button type="submit" class="btn btn-success">
-                            <i class="fas fa-check"></i> [[#{accion.guardar}]]
+                            <i class="fas fa-check"></i>Guardar
                         </button>
                     </div>
                 </div>
             </div>
         </section>
+        <section th:fragment="filtros" class="bg-light">
+            <div class="row py-2">
+                <div class="col-md-1"></div>
+                <div class="col-md-3">
+                    <form method="POST" th:action="@{/libro/query1}" 
+                          class="was-validated">
+                        <div class="card">                            
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="titulo">Titulo</label>
+                                    <input type="text" class="form-control" 
+                                           th:value="${titulo}"
+                                           th:name="titulo" required="true"/>
+                                </div>
+                            </div>
+                            <div class="card-footer text-center">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-check"></i>Consultar Libro
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            
+                </section>
     </body>
 </html>

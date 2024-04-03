@@ -15,13 +15,9 @@ public class Libro implements Serializable {
     
     private Long id;
     
-    
-    
     private String titulo;
     
-    
     private String autor;
-   
     
     private double precio;
     

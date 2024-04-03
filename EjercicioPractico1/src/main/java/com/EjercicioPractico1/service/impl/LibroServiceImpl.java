@@ -22,4 +22,28 @@ public class LibroServiceImpl implements LibroService{
         var lista=libroDao.findAll();
         return lista;
     }
+    
+    @Override
+    @Transactional(readOnly=true)
+    public Libro getLibro(Libro libro) {
+        return libroDao.findById(libro.getId()).orElse(null);
+    }
+    
+    @Override
+    @Transactional
+    public void save(Libro libro) {
+        libroDao.save(libro);
+    }
+    
+     @Override
+    @Transactional
+    public void delete(Libro libro) {
+        libroDao.delete(libro);
+    }
+    
+    @Override
+    @Transactional(readOnly=true)
+    public List<Libro> findByTituloContaining(String titulo){
+        return libroDao.findByTituloContaining(titulo);
+    }
 }
